@@ -1,0 +1,25 @@
+---
+import HeadLayout from "@/layout/headLayout.astro";
+import Nav from "@/layout/nav.astro";
+import Footer from "@/layout/footer.astro";
+import Test from "@/vue/components/Test.vue";
+const pageTitle: string = "Home Page";
+const pageMeta: {} = [
+	{
+		name: "description",
+		content: "This is the home page of my awesome website.",
+	},
+	{ name: "keywords", content: "astro, tailwind, home, awesome website" },
+	{ name: "author", content: "Your Name" },
+];
+---
+
+<HeadLayout title={pageTitle} meta={pageMeta}>
+	<Nav />
+	<h1>Welcome to My Website</h1>
+	<p>This is the homepage.</p>
+	<div class="h-screen w-full">
+		<Test client:load />
+	</div>
+	<Footer />
+</HeadLayout>

@@ -1,0 +1,19 @@
+---
+import '@/styles/global.css'
+const { title, meta } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{title || "Default Title"}</title>
+
+        <!-- Insert dynamic meta tags -->
+        {meta && meta.map((m) => <meta name={m.name} content={m.content} />)}
+    </head>
+    <body>
+        <slot />
+    </body>
+</html>
