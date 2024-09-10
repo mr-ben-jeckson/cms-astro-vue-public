@@ -1,0 +1,24 @@
+---
+import HeadLayout from "@/layout/headLayout.astro";
+import Nav from "@/vue/components/Nav.vue";
+import Footer from "@/layout/footer.astro";
+import LoginForm from "@/vue/components/LoginForm.vue";
+const pageTitle: string = "Login";
+const pageMeta: {} = [
+    {
+        name: "description",
+        content: "This is the login page of my awesome website.",
+    },
+    { name: "keywords", content: "astro, tailwind, login, awesome website" },
+    { name: "author", content: "Your Name" },
+];
+---
+<HeadLayout title={pageTitle} meta={pageMeta}>
+    <Nav client:load />
+    <div class="h-screen flex justify-center items-center">
+        <div class="w-full max-w-md overflow-hidden">
+            <LoginForm client:load />
+        </div>
+    </div>
+    <Footer />
+</HeadLayout>
