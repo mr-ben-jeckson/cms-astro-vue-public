@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSearch" class="hidden md:flex flex-grow justify-center">
+  <form ref="searchForm" @submit.prevent="handleSearch" class="hidden md:flex flex-grow justify-center">
     <div class="w-full relative max-w-md mx-3">
       <input
         type="text"
@@ -25,9 +25,14 @@
   </form>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { gsap } from 'gsap';
 const search = ref<string>('');
+const searchForm = ref<any>(null);
 const handleSearch = (): void => {
     console.log(search.value);
 }
+onMounted(() => {
+    gsap.fromTo(searchForm.value, { translateY: 90, y: -40, opacity: 0 }, { translateY: 0, y: 0, opacity: 1, duration: 2 })
+})
 </script>

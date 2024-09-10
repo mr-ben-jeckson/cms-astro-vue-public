@@ -17,7 +17,9 @@
     </div>
 
     <!-- Center: Search Bar (visible only on md and up) -->
+    <div class="overflow-hidden w-full">
     <Search />
+    </div>
 
     <!-- Right Side: Navigation Links -->
     <div class="hidden md:flex space-x-8 text-lg">
