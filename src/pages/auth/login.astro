@@ -1,6 +1,7 @@
 ---
 import AppLayout from "@/layout/AppLayout.astro";
 import LoginForm from "@/vue/components/LoginForm.vue";
+import authMiddleware from "@/http/middleware";
 const pageTitle: string = "Login";
 const pageMeta: {} = [
     {
@@ -12,7 +13,7 @@ const pageMeta: {} = [
 ];
 ---
 
-<AppLayout title={pageTitle} meta={pageMeta}>
+<AppLayout title={pageTitle} meta={pageMeta} path="auth/login">
     <div class="h-screen flex justify-center items-center">
         <div class="w-full max-w-md overflow-hidden">
             <LoginForm client:load />

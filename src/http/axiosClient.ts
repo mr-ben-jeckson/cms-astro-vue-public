@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
 const axiosClient = axios.create({
-    baseURL: `http://localhost:3000`,
+    baseURL: `${import.meta.env.PUBLIC_SERVER_URL}`,
 });
 
 // Request interceptor to add the Authorization header

@@ -1,5 +1,4 @@
 <template>
-    
     <nav ref="navForm" class="flex items-center justify-between p-4 bg-pink-600 text-white">
     <!-- Left Side: Logo -->
     <div class="flex items-center">
@@ -30,24 +29,27 @@
         <a href="#" class="hover:text-yellow-500 transition-colors">Posts</a>
         <a href="#" class="hover:text-yellow-500 transition-colors">About</a>
         <a href="#" class="hover:text-yellow-500 transition-colors">Contact</a>
-        <a :key="Date.now()" v-if="!noAuthCheck" href="/auth/login" title="Login" class="hover:text-yellow-500 transition-colors">Login</a>
-        <a href="/auth/register" class="hover:text-yellow-500 transition-colors">Register</a>
+        <a :key="Date.now()+'login'" v-if="noAuthCheck" href="/auth/login" title="Login" class="hover:text-yellow-500 transition-colors">Login</a>
+        <a :key="Date.now()+'register'" v-if="noAuthCheck" href="/auth/register" class="hover:text-yellow-500 transition-colors">Register</a>
+        <a @click="logOut" :key="Date.now()+'logout'" v-if="!noAuthCheck" href="/auth/register" class="hover:text-yellow-500 transition-colors">Logout</a>
     </div>
 </nav>
 </template>
 <script setup lang="ts">
 import Search from './Search.vue';
 import { gsap } from 'gsap';
-import { ref, onMounted, inject, computed } from 'vue';
-import { Store } from "vuex";
-const store = inject('store') as Store<any> | null;
+import { ref, onMounted, computed, watch } from 'vue';
+import { store } from "@/vue/store/store";
 const navForm = ref<any>(null);
-const noAuth = ref<boolean>(true);
-const noAuthCheck = computed(() => noAuth); 
+const noAuthCheck = ref<boolean>(true);
+const token = computed(() => store.state.token);
+const logOut = () :void => {
+    store.commit('removeToken');
+    window.location.href = "/"
+}
 onMounted(() => {
-    const check = store.getters['token'];
-    if(check) {
-        noAuth.value = check ? false : true;
+    if(token.value) {
+        noAuthCheck.value = false;
     }
     gsap.fromTo(navForm.value, { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 2 });
 })

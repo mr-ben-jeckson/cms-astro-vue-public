@@ -3,7 +3,8 @@ import "@/styles/global.css";
 import StoreProvider from "@/vue/components/StoreProvider.vue";
 import Nav from "@/vue/components/Nav.vue";
 import Footer from "@/vue/components/Footer.vue";
-const { title, meta } = Astro.props;
+import ClientMiddlware from "@/vue/components/ClientMiddlware.vue";
+const { title, meta, path } = Astro.props;
 ---
 
 <!doctype html>
@@ -33,6 +34,7 @@ const { title, meta } = Astro.props;
   </head>
   <body>
     <StoreProvider client:load>
+      <ClientMiddlware path={path} client:load/>
       <Nav client:load />
         <slot />
       <Footer />
