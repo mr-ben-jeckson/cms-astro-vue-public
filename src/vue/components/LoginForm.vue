@@ -4,13 +4,15 @@
     class="w-full h-full bg-gray-50 rounded-sm shadow-lg py-5 px-3 border border-yellow-500"
   >
     <div class="flex justify-center items-center">
-      <form action="" class="flex flex-col w-full">
+      <form @submit.prevent="handleLogin" class="flex flex-col w-full">
         <label for="fullname" class="text-sm font-bold w-full mb-2">Email *</label>
         <input
           type="email"
           name="email"
           autocomplete="off"
+          required
           v-model="email"
+          :disabled="isLoading"
           placeholder="eg. example@email.com"
           id="fullname"
           class="border rounded-sm border-yellow-500 focus:border-pink-500 px-2 py-2 outline-none mb-2"
@@ -21,12 +23,19 @@
             :type="showType ? 'text' : 'password'"
             name="password"
             autocomplete="off"
+            required
             v-model="password"
+            :disabled="isLoading"
             placeholder="Password"
             id="password"
             class="border w-full rounded-sm border-yellow-500 focus:border-pink-500 px-2 py-2 outline-none mb-2"
           />
-          <button type="button" @click="showPassword" class="absolute right-2 top-2">
+          <button
+            :disabled="isLoading"
+            type="button"
+            @click="showPassword"
+            class="absolute right-2 top-2"
+          >
             <span v-if="showType">
               <svg
                 fill="#EC4899"
@@ -85,29 +94,57 @@
             </span>
           </button>
         </div>
-        <button type="submit" class="w-full mb-2 flex px-2 py-2 bg-pink-600 text-white font-bold rounded-sm justify-center items-center">
-            Login
+        <button
+          :disabled="isLoading"
+          type="submit"
+          class="w-full mb-2 flex px-2 py-2 bg-pink-600 text-white font-bold rounded-sm justify-center items-center"
+        >
+          Login
         </button>
         <label for="register" class="text-sm w-full mb-2 text-yellow-500">
-            If you do not have an account, <a href="/auth/register" class="underline text-pink-500">create a new free</a>
+          If you do not have an account,
+          <a href="/auth/register" class="underline text-pink-500">create a new free</a>
         </label>
       </form>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { gsap } from 'gsap';
+import { ref, onMounted, inject } from "vue";
+import axiosClient from "@/http/axiosClient"; // Import your axios client instance
+import { gsap } from "gsap";
+import { Store } from 'vuex';
 const loginForm = ref<any>(null);
 const email = ref<string>("");
 const password = ref<string>("");
 const showType = ref<boolean>(false);
-
+const isLoading = ref<boolean>(false);
 const showPassword = (): void => {
   showType.value = !showType.value;
 };
+const store = inject('store') as Store<any> | null;
+if (!store) throw new Error('Store not provided');  
+const handleLogin = async (): Promise<void> => {
+  isLoading.value = true;
+  try {
+    const response = await axiosClient.post("/auth/login", {
+      email: email.value,
+      password: password.value,
+    });
+    const { accessToken } = response.data.result;
+    store.commit('setToken', accessToken);
+    console.log(store.state.token)
+  } catch (error) {
+    isLoading.value = false;
+    console.error("Login failed:", error);
+  }
+};
 
 onMounted(() => {
-  gsap.fromTo(loginForm.value, { translateX: 90, x: 40 }, { translateX: 0, x: 0, duration: 2 });
+  gsap.fromTo(
+    loginForm.value,
+    { translateX: 90, x: 40 },
+    { translateX: 0, x: 0, duration: 2 }
+  );
 });
 </script>

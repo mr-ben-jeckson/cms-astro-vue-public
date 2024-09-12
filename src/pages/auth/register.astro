@@ -1,7 +1,5 @@
 ---
-import HeadLayout from "@/layout/headLayout.astro";
-import Nav from "@/vue/components/Nav.vue";
-import Footer from "@/layout/footer.astro";
+import AppLayout from "@/layout/AppLayout.astro";
 const pageTitle: string = "Create a new account";
 const pageMeta: {} = [
     {
@@ -13,10 +11,8 @@ const pageMeta: {} = [
 ];
 ---
 
-<HeadLayout title={pageTitle} meta={pageMeta}>
-    <Nav client:load />
+<AppLayout title={pageTitle} meta={pageMeta}>
     <div class="h-screen flex justify-center items-center">
-        <div class="w-full max-w-md">registration</div>
+        <h1>This is register page</h1>
     </div>
-    <Footer />
-</HeadLayout>
+</AppLayout>

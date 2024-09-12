@@ -1,7 +1,5 @@
 ---
-import Footer from "@/layout/footer.astro";
-import HeadLayout from "@/layout/headLayout.astro";
-import Nav from "@/vue/components/Nav.vue";
+import AppLayout from "@/layout/AppLayout.astro";
 const pageTitle: string = "Home Page";
 const pageMeta: {} = [
 	{
@@ -13,11 +11,9 @@ const pageMeta: {} = [
 ];
 ---
 
-<HeadLayout title={pageTitle} meta={pageMeta}>
-	<Nav client:load />
-	<h1>Welcome to My Website</h1>
-	<p>This is the homepage.</p>
-	<div class="h-screen w-full">
-	</div>
-	<Footer />
-</HeadLayout>
+<AppLayout title={pageTitle} meta={pageMeta}>
+	<h1>
+		This is Home page
+	</h1>
+</AppLayout>
+
