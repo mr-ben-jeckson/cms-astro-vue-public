@@ -20,10 +20,11 @@ axiosClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 axiosClient.interceptors.response.use(
     (response: AxiosResponse) => response,
     (error: AxiosError) => {
-        if (error.response?.status === 401) {
+        const errorMessage = (error.response?.data as { message: string })?.message || 'An error occurred';
+        if (error.response?.status === 401 && errorMessage === 'Unauthorized') {
             localStorage.removeItem('TOKEN');
             // Redirect to the login page
-            window.location.href = 'auth/login';
+            window.location.href = '/auth/login';
         }
 
         return Promise.reject(error);

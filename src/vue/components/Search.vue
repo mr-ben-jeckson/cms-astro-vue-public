@@ -1,12 +1,13 @@
 <template>
-  <form ref="searchForm" @submit.prevent="handleSearch" class="hidden md:flex flex-grow justify-center">
+  <form ref="searchForm" @submit.prevent="handleSearch" class="flex-grow justify-center" :class="[isMobile ? 'flex' : 'hidden md:flex']">
     <div class="w-full relative max-w-md mx-3">
       <input
         type="text"
         v-model="search"
         autocomplete="off"
         placeholder="Search..."
-        class="w-full rounded-sm px-3 py-2 text-black border-none outline-none focus:ring-2 focus:ring-yellow-500"
+        class="w-full rounded-sm px-3 py-2 outline-none text-black focus:ring-2 focus:ring-yellow-500"
+        :class="[isMobile ? 'border border-pink-600 focus:border-none' : 'border-none']"
       />
       <button v-if="search" type="submit" class="absolute right-5 top-2">
         <svg
@@ -25,14 +26,22 @@
   </form>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { gsap } from 'gsap';
 const search = ref<string>('');
 const searchForm = ref<any>(null);
+const props = defineProps<{
+  mobile?: boolean
+}>();
+const isMobile = computed(() => props.mobile);
 const handleSearch = (): void => {
     console.log(search.value);
 }
 onMounted(() => {
-    gsap.fromTo(searchForm.value, { translateY: 90, y: -40, opacity: 0 }, { translateY: 0, y: 0, opacity: 1, duration: 2 })
+    if(isMobile.value) {
+      gsap.fromTo(searchForm.value, { translateX: -90, x: 40, opacity: 0.5 }, { translateX: 0, x: 0, opacity: 1, duration: 1 })
+    } else {
+      gsap.fromTo(searchForm.value, { translateY: 90, y: -40, opacity: 0 }, { translateY: 0, y: 0, opacity: 1, duration: 2 })
+    }
 })
 </script>

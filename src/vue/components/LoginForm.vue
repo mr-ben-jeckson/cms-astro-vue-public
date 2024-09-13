@@ -3,6 +3,13 @@
     ref="loginForm"
     class="w-full h-full bg-gray-50 rounded-sm shadow-lg py-5 px-3 border border-yellow-500"
   >
+    <div class="w-full mb-2">
+      <InlineMessage
+        severity="error"
+        :message="error"
+        @close="hideError"
+      />
+    </div>
     <div class="flex justify-center items-center">
       <form @submit.prevent="handleLogin" class="flex flex-col w-full">
         <label for="fullname" class="text-sm font-bold w-full mb-2">Email *</label>
@@ -11,7 +18,7 @@
           name="email"
           autocomplete="off"
           required
-          v-model="email"
+          v-model="credential.email"
           :disabled="isLoading"
           placeholder="eg. example@email.com"
           id="fullname"
@@ -24,7 +31,7 @@
             name="password"
             autocomplete="off"
             required
-            v-model="password"
+            v-model="credential.password"
             :disabled="isLoading"
             placeholder="Password"
             id="password"
@@ -110,35 +117,43 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, inject } from "vue";
-import axiosClient from "@/http/axiosClient"; // Import your axios client instance
+import InlineMessage from "@/vue/components/InlineMessage.vue";
+import { ref, onMounted } from "vue";
 import { gsap } from "gsap";
-import { Store } from 'vuex';
-const loginForm = ref<any>(null);
-const email = ref<string>("");
-const password = ref<string>("");
+import { store } from "@/vue/store/store";
+
+const loginForm = ref<HTMLElement | null>(null);
+const error = ref<string>("");
+const credential = ref<{
+  email: string;
+  password: string;
+}>({
+  email: "",
+  password: "",
+});
 const showType = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
+
 const showPassword = (): void => {
   showType.value = !showType.value;
 };
-const store = inject('store') as Store<any> | null;
-if (!store) throw new Error('Store not provided');  
-const handleLogin = async (): Promise<void> => {
+
+const handleLogin = (): void => {
   isLoading.value = true;
-  try {
-    const response = await axiosClient.post("/auth/login", {
-      email: email.value,
-      password: password.value,
-    });
-    const { accessToken } = response.data.result;
-    store.commit('setToken', accessToken);
-    console.log(store.state.token)
-  } catch (error) {
-    isLoading.value = false;
-    console.error("Login failed:", error);
-  }
+  store.dispatch('login', credential.value)
+    .then(() => {
+      window.location.href = "/"
+    })
+    .catch((err: any) => {
+      isLoading.value = false;
+      error.value = err?.response.data?.message || "An error occurred";
+    })
 };
+
+const hideError = () :void => {
+  console.log("hide");
+  error.value = "";
+}
 
 onMounted(() => {
   gsap.fromTo(
