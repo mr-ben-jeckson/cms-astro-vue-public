@@ -20,23 +20,21 @@ const { title, meta, path } = Astro.props;
     {meta && meta.map((m) => <meta name={m.name} content={m.content} />)}
     <style>
       @font-face {
-        font-family: "NexaTextDemo";
-        src:
-          url("/NexaTextDemo-Light.ttf") format("truetype"),
-          url("/NexaTextDemo-Bold.ttf") format("truetype");
+        font-family: "DoHyeon";
+        src: url("/DoHyeon-Regular.ttf") format("truetype");
         font-weight: normal;
         font-style: normal;
       }
       body {
-        font-family: "NexaTextDemo", sans-serif;
+        font-family: "DoHyeon", sans-serif;
       }
     </style>
   </head>
   <body>
     <StoreProvider client:load>
-      <ClientMiddlware path={path} client:load/>
+      <ClientMiddlware path={path} client:load />
       <Nav client:load />
-        <slot />
+      <slot />
       <Footer />
     </StoreProvider>
   </body>

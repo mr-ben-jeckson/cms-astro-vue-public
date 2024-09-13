@@ -1,5 +1,6 @@
 ---
 import AppLayout from "@/layout/AppLayout.astro";
+import RegisterForm from "@/vue/components/RegisterForm.vue";
 const pageTitle: string = "Create a new account";
 const pageMeta: {} = [
     {
@@ -13,6 +14,8 @@ const pageMeta: {} = [
 
 <AppLayout title={pageTitle} meta={pageMeta} path="auth/register">
     <div class="h-screen flex justify-center items-center">
-        <h1>This is register page</h1>
+        <div class="w-full max-w-md overflow-hidden">
+            <RegisterForm client:load />
+        </div>
     </div>
 </AppLayout>
