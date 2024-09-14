@@ -1,17 +1,17 @@
 <template>
   <div class="w-full">
-    <h1 ref="typingText" class="text-3xl animate-fadeIn py-2 my-2">Create a new account</h1>
-    <div
-      ref="loginForm"
-      class="w-full h-full bg-gray-50 rounded-sm shadow-lg py-5 px-3"
-    >
+    <h1 ref="typingText" class="text-3xl animate-fadeIn py-2 my-2">
+      Create a new account
+    </h1>
+    <div ref="loginForm" class="w-full h-full bg-gray-50 rounded-sm shadow-lg py-5 px-3">
       <div class="w-full mb-2">
         <InlineMessage severity="error" :message="error" @close="hideError" />
       </div>
       <div class="flex justify-center items-center">
-        <form @submit.prevent="handleLogin" class="flex flex-col w-full">
+        <form @submit.prevent="handleRegister" class="flex flex-col w-full">
           <label for="fullname" class="text-sm font-bold w-full mb-2">Full Name *</label>
           <input
+            @change="checkNameString"
             type="text"
             name="name"
             autocomplete="off"
@@ -24,6 +24,7 @@
           />
           <label for="email" class="text-sm font-bold w-full mb-2">Email *</label>
           <input
+            @change="checkEmailAddress"
             type="email"
             name="email"
             autocomplete="off"
@@ -36,10 +37,10 @@
           />
           <label for="phone" class="text-sm font-bold w-full mb-2">Mobile Number</label>
           <input
+            @keyup="checkValidNumber"
             type="text"
             name="phone"
             autocomplete="off"
-            required
             v-model="resgistration.phone"
             :disabled="isLoading"
             placeholder="eg. +959 97 249 6871"
@@ -123,11 +124,14 @@
               </span>
             </button>
           </div>
-          <label for="password-confirmation" class="text-sm font-bold w-full mb-2">Retype Password *</label>
+          <label for="password-confirmation" class="text-sm font-bold w-full mb-2"
+            >Retype Password *</label
+          >
           <div class="relative mb-2">
             <input
               :type="showConfirmType ? 'text' : 'password'"
               name="password"
+              @change="checkConfirmPassword"
               autocomplete="off"
               required
               v-model="resgistration.confirmPassword"
@@ -207,9 +211,13 @@
           >
             Register
           </button>
-          <label for="loginOrReset" class="text-sm w-full flex justify-between items-center mb-2 text-yellow-500">
-            <a href="/auth/login" class="underline text-pink-500">login with existing account</a>.
-            <a href="/auth/reset" class="underline ">forgot password?</a>.
+          <label
+            for="loginOrReset"
+            class="text-sm w-full flex justify-between items-center mb-2 text-yellow-500"
+          >
+            <a href="/auth/login" class="underline text-pink-500"
+              >login with existing account</a
+            >. <a href="/auth/reset" class="underline">forgot password?</a>.
           </label>
         </form>
       </div>
@@ -218,7 +226,7 @@
 </template>
 <script setup lang="ts">
 import InlineMessage from "@/vue/components/InlineMessage.vue";
-import SplitType from 'split-type';
+import SplitType from "split-type";
 import { ref, onMounted } from "vue";
 import { gsap } from "gsap";
 import { store } from "@/vue/store/store";
@@ -227,13 +235,13 @@ const loginForm = ref<HTMLElement | null>(null);
 const typingText = ref<HTMLElement | null>(null);
 const error = ref<string>("");
 const resgistration = ref<{
-  name: string,  
-  email: string,
-  phone: string,
-  password: string,
-  confirmPassword: string,
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
 }>({
-  name: "",  
+  name: "",
   email: "",
   phone: "",
   password: "",
@@ -248,21 +256,92 @@ const showPassword = (): void => {
   showType.value = !showType.value;
 };
 
-const showConfirmPassword = () : void => {
-    showConfirmType.value = !showConfirmType.value;
-}
+const showConfirmPassword = (): void => {
+  showConfirmType.value = !showConfirmType.value;
+};
 
-const handleLogin = (): void => {
-  isLoading.value = true;
+const handleRegister = (): void => {
+  // validate all
+  checkConfirmPassword();
+  checkValidNumber();
+  checkEmailAddress();
+  checkNameString();
+  // transform schema
+  const user = {
+    name: resgistration.value.name,
+    email: resgistration.value.email,
+    password: resgistration.value.password,
+    phone: resgistration.value.phone,
+  };
+  if (error.value) {
+    isLoading.value = false;
+  } else {
+    submitRegisteration(user);
+  }
+};
+
+const submitRegisteration = (user: {}): void => {
   store
-    .dispatch("login", resgistration.value)
+    .dispatch("register", user)
     .then(() => {
-      window.location.href = "/";
+      console.log("Registration Success");
     })
     .catch((err: any) => {
       isLoading.value = false;
       error.value = err?.response.data?.message || "An error occurred";
     });
+};
+
+const validatePhoneNumber = (phone: string | null): boolean => {
+  if (!phone) return true;
+  const regex = /^[+\-\(\)\d]+( [+\-\(\)\d]+)*$/;
+  return regex.test(phone);
+};
+
+const validateEmailAddress = (email: string): boolean => {
+  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return regex.test(email);
+};
+
+const validateConfirmPassword = (password: string): boolean => {
+  return resgistration.value.password === password;
+};
+
+const checkNameString = (): void => {
+  if (
+    typeof resgistration.value.name === "string" &&
+    resgistration.value.name.trim().length >= 4
+  ) {
+    error.value = "";
+  } else {
+    error.value = "Name at least four characters.";
+  }
+};
+
+const checkValidNumber = (): void => {
+  if (validatePhoneNumber(resgistration.value.phone)) {
+    error.value = "";
+  } else {
+    error.value = "Only +, -, (), one space between character allows in Phone Number";
+  }
+};
+
+const checkEmailAddress = (): void => {
+  if (validateEmailAddress(resgistration.value.email)) {
+    error.value = "";
+  } else if (!resgistration.value.email) {
+    error.value = "Email address required";
+  } else {
+    error.value = "Email must include @ symbol and domain address";
+  }
+};
+
+const checkConfirmPassword = (): void => {
+  if (validateConfirmPassword(resgistration.value.confirmPassword)) {
+    error.value = "";
+  } else {
+    error.value = "Confirm Password must be the same your password";
+  }
 };
 
 const hideError = (): void => {
@@ -272,12 +351,12 @@ const hideError = (): void => {
 
 onMounted(() => {
   if (typingText.value) {
-    const text = new SplitType(typingText.value, { types: 'chars' });
+    const text = new SplitType(typingText.value, { types: "chars" });
     gsap.from(text.chars, {
       opacity: 0,
       y: 10,
-      stagger: 0.05,  // Typing speed
-      ease: 'power4.out',
+      stagger: 0.05, // Typing speed
+      ease: "power4.out",
     });
   }
   gsap.fromTo(

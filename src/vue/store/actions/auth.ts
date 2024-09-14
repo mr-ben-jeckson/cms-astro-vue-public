@@ -8,6 +8,10 @@ export const login = ({ commit }: { commit: Function }, user: { email: string, p
         });
 }
 
+export const register = ({ commit }: { commit: Function }, user: { email: string, password: string }) => {
+    return axiosClient.post('/auth/register', user);
+};
+
 export const logout = ({ commit }: { commit: Function }) => {
     commit('removeToken');
 }
