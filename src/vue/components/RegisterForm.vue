@@ -1,14 +1,22 @@
 <template>
   <div class="w-full">
-    <h1 ref="typingText" class="text-3xl animate-fadeIn py-2 my-2">
+    <h1 v-if="isSuccess" ref="typingText" class="text-3xl animate-fadeIn py-2 my-2">
+      Congratulations! {{ userData?.name }} 
+    </h1>
+    <h1 v-else  ref="typingText" class="text-3xl animate-fadeIn py-2 my-2">
       Create a new account
     </h1>
     <div ref="loginForm" class="w-full h-full bg-gray-50 rounded-sm shadow-lg py-5 px-3">
       <div class="w-full mb-2">
         <InlineMessage severity="error" :message="error" @close="hideError" />
       </div>
+      <div v-if="isSuccess" class="w-full mb-2">
+        <InlineMessage severity="success" 
+        :message="`You have successfully registration. Please login with ${userData?.email}. We will redirect login page in 5 seconds.`
+        " closeDisable />
+      </div>
       <div class="flex justify-center items-center">
-        <form @submit.prevent="handleRegister" class="flex flex-col w-full">
+        <form v-if="!isSuccess" @submit.prevent="handleRegister" class="flex flex-col w-full">
           <label for="fullname" class="text-sm font-bold w-full mb-2">Full Name *</label>
           <input
             @change="checkNameString"
@@ -251,6 +259,8 @@ const resgistration = ref<{
 const showType = ref<boolean>(false);
 const showConfirmType = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
+const isSuccess = ref<boolean>(false);
+const userData = ref<any>();
 
 const showPassword = (): void => {
   showType.value = !showType.value;
@@ -271,7 +281,7 @@ const handleRegister = (): void => {
     name: resgistration.value.name,
     email: resgistration.value.email,
     password: resgistration.value.password,
-    phone: resgistration.value.phone,
+    phone: resgistration.value?.phone,
   };
   if (error.value) {
     isLoading.value = false;
@@ -283,8 +293,12 @@ const handleRegister = (): void => {
 const submitRegisteration = (user: {}): void => {
   store
     .dispatch("register", user)
-    .then(() => {
-      console.log("Registration Success");
+    .then(({ data }) => {
+      isSuccess.value = true;
+      userData.value = data.result;
+      setTimeout(() => {
+        window.location.href = "/auth/login"
+      }, 5000)
     })
     .catch((err: any) => {
       isLoading.value = false;
@@ -345,7 +359,6 @@ const checkConfirmPassword = (): void => {
 };
 
 const hideError = (): void => {
-  console.log("hide");
   error.value = "";
 };
 

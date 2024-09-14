@@ -153,7 +153,6 @@ const handleLogin = (): void => {
 };
 
 const hideError = (): void => {
-  console.log("hide");
   error.value = "";
 };
 

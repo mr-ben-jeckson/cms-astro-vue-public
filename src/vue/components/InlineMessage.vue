@@ -1,7 +1,7 @@
 <template>
   <div v-if="message" :class="['animate-fadeIn px-4 py-2 w-full rounded-sm border flex justify-between items-center', severityClass]">
     <span>{{ message }}</span>
-    <button type="button" @click="handleClose" class="ml-2 text-lg font-bold text-current focus:outline-none">×</button>
+    <button v-if="!props.closeDisable" type="button" @click="handleClose" class="ml-2 text-lg font-bold text-current focus:outline-none">×</button>
   </div>
 </template>
 
@@ -9,8 +9,9 @@
 import { computed } from 'vue';
 
 const props = defineProps<{
-  severity: string;
-  message: string;
+  severity: string,
+  message: string,
+  closeDisable?: boolean
 }>();
 
 const emit = defineEmits<{
