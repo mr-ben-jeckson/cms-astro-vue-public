@@ -1,9 +1,15 @@
 <template>
   <div
-    class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center text-white"
+    class="absolute z-20 inset-0 flex flex-col items-center justify-center p-4 text-center text-white"
   >
     <h1 ref="typingText" class="text-4xl md:text-6xl font-bold mb-2">{{ header }}</h1>
     <p class="text-xl md:text-2xl font-light animate-fadeIn">{{ intro }}</p>
+    <a v-if="button" :href="buttonLink" 
+        class="mt-2 justify-center items-center rounded-md 
+        px-2 py-1 bg-pink-600 text-white 
+        shadow hover:bg-black animate-fadeIn">
+      {{ buttonName }}
+    </a>
   </div>
 </template>
 <script setup lang="ts">
