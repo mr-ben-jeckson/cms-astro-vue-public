@@ -1,6 +1,9 @@
 ---
+import axiosClient from "@/http/axiosClient";
 import AppLayout from "@/layout/AppLayout.astro";
 import BannerSlider from "@/vue/components/BannerSlideShow/BannerSlider.vue";
+import type { AxiosResponse } from "axios";
+import axios from "axios";
 const pageTitle: string = "Home Page";
 const pageMeta: {} = [
 	{
@@ -10,8 +13,21 @@ const pageMeta: {} = [
 	{ name: "keywords", content: "astro, tailwind, home, awesome website" },
 	{ name: "author", content: "Your Name" },
 ];
+
+async function getActiveBanners(): Promise<[]> {
+	try {
+		const response: AxiosResponse = await axios.get(
+			`${import.meta.env.PUBLIC_SERVER_URL}/settings/banners`,
+		);
+		const banners: [] = response.data.result;
+		return banners;
+	} catch (error) {
+		console.error(error);
+	}
+}
+const banners = await getActiveBanners();
 ---
 
 <AppLayout title={pageTitle} meta={pageMeta} path="/">
-	<BannerSlider client:load />
+	{ (banners && banners.length == 0) ? <div></div> : <BannerSlider slideshow={banners} client:load /> }
 </AppLayout>

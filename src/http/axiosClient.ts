@@ -7,7 +7,7 @@ const axiosClient = axios.create({
 
 // Request interceptor to add the Authorization header
 axiosClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-    const authToken = localStorage.getItem('TOKEN') ?? null;
+    const authToken = localStorage?.getItem('TOKEN') ?? null;
 
     if (authToken && config.headers) {
         config.headers['Authorization'] = `Bearer ${authToken}`;

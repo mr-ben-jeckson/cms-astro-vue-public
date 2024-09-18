@@ -19,7 +19,7 @@
                 alt="Slide Image"
               />
               <SlideContent
-                v-if="showContent && currentSlide?.mediaId == image.mediaId"
+                v-if="showContent && currentSlide.key == image.key"
                 :header="currentSlide?.header"
                 :intro="currentSlide?.intro"
                 :button="currentSlide?.button"
@@ -46,28 +46,13 @@ import { gsap } from "gsap";
 import { ref, onMounted } from "vue";
 import { Carousel, Slide, Navigation, Pagination } from "vue3-carousel";
 const myCarousel = ref<HTMLElement | null>();
-const slide = ref<any[]>([
-  {
-    mediaId: "1sdsd",
-    url:
-      "https://images.pexels.com/photos/28389852/pexels-photo-28389852/free-photo-of-traditional-colorful-turkish-carpet.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    header: "Hello Slider",
-    intro: "Welcome to banner slide show",
-    button: false,
-  },
-  {
-    mediaId: "45687a",
-    url:
-      "https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    header: "Hello Slider 2",
-    intro: "Welcome to banner slide show 2",
-    button: true,
-    buttonLink: "#",
-    buttonName: "Expore Now",
-  },
-]);
-
+const props = defineProps<{
+  slideshow: CurrentSlide[]
+}>()
+const slide = ref<CurrentSlide[]>(props.slideshow);
 interface CurrentSlide {
+  id: number;
+  key: string;
   mediaId: string;
   url: string;
   header: string;
