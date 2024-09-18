@@ -1,5 +1,6 @@
 ---
 import AppLayout from "@/layout/AppLayout.astro";
+import BannerSlider from "@/vue/components/BannerSlideShow/BannerSlider.vue";
 const pageTitle: string = "Home Page";
 const pageMeta: {} = [
 	{
@@ -12,5 +13,5 @@ const pageMeta: {} = [
 ---
 
 <AppLayout title={pageTitle} meta={pageMeta} path="/">
-	<h1>This is Home page</h1>
+	<BannerSlider client:load />
 </AppLayout>
