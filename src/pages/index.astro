@@ -5,14 +5,6 @@ import BannerSlider from "@/vue/components/BannerSlideShow/BannerSlider.vue";
 import type { AxiosResponse } from "axios";
 import axios from "axios";
 const pageTitle: string = "Home Page";
-const pageMeta: {} = [
-	{
-		name: "description",
-		content: "This is the home page of my awesome website.",
-	},
-	{ name: "keywords", content: "astro, tailwind, home, awesome website" },
-	{ name: "author", content: "Your Name" },
-];
 
 async function getActiveBanners(): Promise<[]> {
 	try {
@@ -23,11 +15,34 @@ async function getActiveBanners(): Promise<[]> {
 		return banners;
 	} catch (error) {
 		console.error(error);
+		return [];
 	}
 }
 const banners = await getActiveBanners();
+
+async function getHomeMetaTags(): Promise<[]> {
+	try {
+		const response: AxiosResponse = await axios.get(
+			`${import.meta.env.PUBLIC_SERVER_URL}/settings/meta-default`,
+		);
+		const metaTags: [] = response.data.result;
+		return metaTags;
+	} catch (error) {
+		console.error(error);
+		return [];
+	}
+}
+const meta: [] = await getHomeMetaTags();
+const homeMetaTags = meta?.map((tag: { value: string }) => tag.value);
+
 ---
 
-<AppLayout title={pageTitle} meta={pageMeta} path="/">
-	{ (banners && banners.length == 0) ? <div></div> : <BannerSlider slideshow={banners} client:load /> }
+<AppLayout title={pageTitle} meta={homeMetaTags} path="/">
+	{
+		banners && banners.length == 0 ? (
+			<div />
+		) : (
+			<BannerSlider slideshow={banners} client:load />
+		)
+	}
 </AppLayout>

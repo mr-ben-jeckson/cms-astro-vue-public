@@ -17,7 +17,13 @@ const { title, meta, path } = Astro.props;
     <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
     <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
     <!-- Insert dynamic meta tags -->
-    {meta && meta.map((m) => <meta name={m.name} content={m.content} />)}
+    {
+      meta &&
+        meta.map((m) => {
+          if (m?.name) return <meta name={m.name} content={m.content} />;
+          else return <meta property={m?.property} content={m.content} />;
+        })
+    }
     <style>
       @font-face {
         font-family: "DoHyeon";
